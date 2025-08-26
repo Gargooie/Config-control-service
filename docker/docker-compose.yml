@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: config_service_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - config_network
+    restart: unless-stopped
+
+  # Config Service Application
+  config_service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: config_service_app
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}  
+      - DB_PASSWORD=${DB_PASSWORD}
+      - APP_PORT=${APP_PORT}
+    ports:
+      - "${APP_PORT}:8080"
+    depends_on:
+      - postgres
+    networks:
+      - config_network
+    volumes:
+      - ../config_service:/app/config_service
+    restart: unless-stopped
+
+networks:
+  config_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

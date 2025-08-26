@@ -1,0 +1,22 @@
+# Twisted framework
+twisted==23.8.0
+
+# Database
+psycopg2-binary==2.9.6
+txpostgres==1.7.0
+
+# YAML and JSON processing
+PyYAML==6.0.1
+
+# Template engine
+Jinja2==3.1.2
+
+# Schema validation
+schema==0.7.5
+
+# Testing
+pytest==7.4.0
+pytest-twisted==1.14.0
+
+# Type hints
+typing-extensions==4.7.1
